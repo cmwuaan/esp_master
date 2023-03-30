@@ -16,15 +16,15 @@ LiquidCrystal_I2C lcd(0x27,16,2);
 #define TRIGGER D5
 #define ECHO D6
 
-const char* ssid = "Ly Ha";
-const char* password = "lyha2002";
+const char* ssid = "<YOUR_SSID>";
+const char* password = "<YOUR_PASSWORD>";
 
 // Define static IP Settings
-IPAddress local_IP(192, 168, 1, 202);
-IPAddress gateway(192, 168, 1, 1);
-IPAddress subnet(255, 255, 255, 0);
-IPAddress primaryDNS(8, 8, 8, 8);
-IPAddress secondaryDNS(8, 8, 4, 4);
+// IPAddress local_IP(192, 168, 1, 202);
+// IPAddress gateway(192, 168, 1, 1);
+// IPAddress subnet(255, 255, 255, 0);
+// IPAddress primaryDNS(8, 8, 8, 8);
+// IPAddress secondaryDNS(8, 8, 4, 4);
 
 // StaticJsonDocument<500> TempDoc;
 String message = "";
