@@ -7,16 +7,23 @@
 #include <ESP8266WebServer.h>
 #include <LiquidCrystal_I2C.h>
 #include <AccelStepper.h>
+#include <Servo.h>
 
 ESP8266WiFiMulti WiFiMulti;
 ESP8266WebServer server(80);
 WebSocketsServer webSocket = WebSocketsServer(81);
 LiquidCrystal_I2C lcd(0x27,16,2); 
 
+Servo upServo;
+Servo downServo;
+
+#define servoUpPin D4
+#define servoDownPin D7
+
 #define TRIGGER D5
 #define ECHO D6
 
-const char* ssid = "<YOUR_SSID>";
+const char* ssid = "<YOUR_WIFI_NAME>";
 const char* password = "<YOUR_PASSWORD>";
 
 // Define static IP Settings
@@ -38,6 +45,8 @@ bool status = 1;
 void objectDetection();
 void turnMotorLeft();
 void turnMotorRight();
+void LeftBin();
+void RightBin();
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
 
@@ -95,10 +104,12 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
       // }  else 
       if (cmd == "left") {
         Serial.println(cmd + ": LEFT");
-        turnMotorLeft();
+        // turnMotorLeft();
+        LeftBin();
       } else if (cmd =="right") {
         Serial.println(cmd + ": RIGHT");
-        turnMotorRight();
+        // turnMotorRight();
+        RightBin();
       } else {
         message = cmd;
         Serial.println(message);
@@ -151,6 +162,10 @@ void setup() {
 
   pinMode(TRIGGER, OUTPUT);
   pinMode(ECHO, INPUT);
+  upServo.attach(servoUpPin);
+  downServo.attach(servoDownPin);
+  upServo.write(0);
+  downServo.write(90);
 }
 
 void loop() {
@@ -186,6 +201,28 @@ void turnMotorRight() {
   Serial.println("END");
 }
 
+void LeftBin() {
+  upServo.write(90);
+        delay(1000);
+        upServo.write(0);
+        delay(1000);
+        downServo.write(180);
+        delay(2000);
+        downServo.write(90);
+        delay(1000);
+}
+
+void RightBin() {
+  upServo.write(90);
+        delay(1000);
+        upServo.write(0);
+        delay(1000);
+        downServo.write(0);
+        delay(2000);
+        downServo.write(90);
+        delay(1000);  
+}
+
 void objectDetection() {
   long duration;
   int distance;
@@ -199,7 +236,7 @@ void objectDetection() {
   delay(200);
   if (distance < 15) {
     if (status) {
-      // Serial.println("OKKKKKKKKKKKKKKKKKKK");
+      Serial.println("OKKKKKKKKKKKKKKKKKKK");
       webSocket.broadcastTXT("capture");
       status = 0;
     } else {
